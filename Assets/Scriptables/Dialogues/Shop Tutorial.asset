@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc7fa65b731b264a8887ad37ecec4e4, type: 3}
+  m_Name: Shop Tutorial
+  m_EditorClassIdentifier: 
+  sentences:
+  - "Ao final de cada turno aparecer\xE1 a op\xE7\xE3o de comprar novas armas ou
+    comprar a\xE7\xF5es."
+  - "Veja como \xE9 f\xE1cil investir e ganhar mais dinheiro para ter armas melhores."
+  - "S\xF3 n\xE3o esque\xE7a que tudo tem seu risco."

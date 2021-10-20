@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasDialogue: 1
   dialogueSO: {fileID: 11400000, guid: 9a7f44df35ab8274eafe32324226f53a, type: 2}
-  numberOfEnemies: 4
+  numberOfEnemies: 6
   timeBtwnSpawns: 2
   enemyType: 0

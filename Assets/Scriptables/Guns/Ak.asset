@@ -12,5 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b0a5efbad7bfca4f8e88dbb094aae4c, type: 3}
   m_Name: Ak
   m_EditorClassIdentifier: 
+  gunName: Ak - 47
   fireRate: 5
   gunDamage: 1
+  price: 1
+  gunImage: {fileID: 21300000, guid: cdf490ede6e01834c88b0cba12daa473, type: 3}
+  projectile: 0
+  maxAmmo: 0
+  reloadTime: 0

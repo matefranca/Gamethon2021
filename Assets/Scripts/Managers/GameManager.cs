@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Clear.Managers
 {
@@ -10,6 +11,10 @@ namespace Clear.Managers
         [Header("Levels ")]
         [SerializeField]
         private LevelSO[] levels;
+
+        [Header("Buttons.")]
+        [SerializeField]
+        private Button nextLevelButton;
 
         public Camera CurrentCamera { get; private set; }
 
@@ -21,6 +26,7 @@ namespace Clear.Managers
         private LevelSO currentLevel;
 
         private UIManager uiManager;
+        private GunManager gunManager;
         private PlayerManager playerManager;
         private SpawnerManager spawnerManager;
         private DialogueManager dialogueManager;
@@ -30,11 +36,15 @@ namespace Clear.Managers
             CurrentCamera = Camera.main;
 
             PlayerTransform = GameObject.FindGameObjectWithTag(GameConstants.PLAYER_TAG).transform;
+
+            nextLevelButton.onClick.RemoveAllListeners();
+            nextLevelButton.onClick.AddListener(StartNextLevel);
         }
 
         private void Start()
         {
             uiManager = UIManager.GetInstance();
+            gunManager = GunManager.GetInstance();
             playerManager = PlayerManager.GetInstance();
             spawnerManager = SpawnerManager.GetInstance();
             dialogueManager = DialogueManager.GetInstance();
@@ -49,12 +59,15 @@ namespace Clear.Managers
 
             if (levels.Length == 0) return;
 
+            gunManager.UpdateGunsImages();
             StartNextLevel();
         }
 
 
         public void StartNextLevel()
         {
+            UIManager.GetInstance().CloseShop();
+
             if (playerManager.GameData.level >= levels.Length)
             {
                 LevelSO levelSO = new LevelSO(false, null, currentLevel.numberOfEnemies + 2, currentLevel.timeBtwnSpawns, EnemyType.Slow);
@@ -102,7 +115,7 @@ namespace Clear.Managers
             InputEnabled = false;
             playerManager.LevelUp();
             uiManager.EnableButtons();
-            ShopManager.GetInstance().ChangeStocks();
+            StockManager.GetInstance().ChangeStocks();
         }
 
         public void RestartGame()

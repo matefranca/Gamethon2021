@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Clear.Managers;
 using UnityEngine.UI;
+using UnityEngine.AI;
+using Clear.Managers;
 
 namespace Clear
 {
@@ -20,6 +21,10 @@ namespace Clear
         [SerializeField]
         private ParticleSystem particleSystem;
         
+        [Header("Navmesh Agent")]
+        [SerializeField]
+        private NavMeshAgent agent;
+
         private Transform target;
 
         private float moveSpeed;
@@ -40,8 +45,8 @@ namespace Clear
 
         public void Init(EnemySO enemySO)
         {
-            moveSpeed = enemySO.moveSpeed;
             maxLifes = enemySO.lifes;
+            agent.speed = enemySO.moveSpeed;
         }
 
         private void Move()
@@ -49,7 +54,14 @@ namespace Clear
             if (target == null) return;
 
             transform.LookAt(target);
-            transform.position = Vector3.MoveTowards(transform.position, target.position, moveSpeed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, target.position) < 0.2f)
+            {
+                agent.SetDestination(transform.position);
+            }
+            else
+            {
+                agent.SetDestination(target.position);
+            }
         }
 
         public void TakeDamage(int amount)

@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07f20dc96b3c7444eb71e1afd80e0a8e, type: 3}
   m_Name: Level 0
   m_EditorClassIdentifier: 
-  hasDialogue: 1
+  hasDialogue: 0
   dialogueSO: {fileID: 11400000, guid: 8da79d97e0193f043bdd0847a5aa2854, type: 2}
-  numberOfEnemies: 2
+  numberOfEnemies: 1
   timeBtwnSpawns: 2
   enemyType: 1

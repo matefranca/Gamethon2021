@@ -7,4 +7,6 @@ public class EnemySO : ScriptableObject
     public EnemyType enemyType;
     public float moveSpeed;
     public float lifes;
+    public int damage;
+    public GameObject enemyPrefab;
 }

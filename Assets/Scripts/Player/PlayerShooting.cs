@@ -16,9 +16,7 @@ namespace Clear
 
         [Header("Guns.")]
         [SerializeField]
-        private GameObject firstGunObject;
-        [SerializeField]
-        private GameObject secondGunObject;
+        private GameObject[] gunsObjects;
 
         [Header("Prefabs.")]
         [SerializeField]
@@ -28,60 +26,71 @@ namespace Clear
         [SerializeField]
         private Transform firePoint;
 
-        [Header("Guns SO.")]
-        [SerializeField]
-        private GunSO[] gunsSO;
-
         private PlayerInput playerInput;
+
+        private GunManager gunManager;
+        private UIManager uiManager;
 
         public bool canShoot = true;
 
         private float fireRate;
         private int gunDamage;
+        private int ammo;
+        private float reloadTime;
 
         private string enableShootFuncName = "EnableShoot";
+        private string reloadFuncName = "Reload";
 
-        private int activeWeapon;
+        private int activeGunIndex;
         private GunSO activeGunSO;
 
         private void Start()
         {
             playerInput = GetComponent<PlayerInput>();
-            playerInput.onFirstGunInput += ChangeToFirstWeapon;
-            playerInput.onSecondGunInput += ChangeToSecondWeapon;
 
+            gunManager = GunManager.GetInstance();
+            uiManager = UIManager.GetInstance();
+
+            playerInput.onGunInput += ChangeToWeapon;
             playerInput.onShootInput += Shoot;
+
             canShoot = true;
-            activeWeapon = 1;
-            activeGunSO = gunsSO[0];
+            activeGunIndex = 1;
+            activeGunSO = activeGunSO = gunManager.GetGunSO(0);
             UpdateGunStatus();
         }
 
-        private void ChangeToFirstWeapon()
+        
+
+        private void ChangeToWeapon(int index)
         {
-            if (activeWeapon == 1) return;
+            if (gunManager.HasGunEnabled(index) && activeGunIndex != index && index >= 0 && index < gunsObjects.Length)
+            {
+                foreach (GameObject gun in gunsObjects)
+                {
+                    gun.SetActive(false);
+                }
 
-            firstGunObject.SetActive(true);
-            secondGunObject.SetActive(false);
-            activeWeapon = 1;
-            activeGunSO = gunsSO[0];
-            UpdateGunStatus();
-        }
+                gunsObjects[index].SetActive(true);
 
-        private void ChangeToSecondWeapon()
-        {
-            if (activeWeapon == 2) return;
+                gunManager.SetGunAmmo(activeGunIndex, ammo);
 
-            firstGunObject.SetActive(false);
-            secondGunObject.SetActive(true);
-            activeWeapon = 2;
-            activeGunSO = gunsSO[1];
-            UpdateGunStatus();
+                activeGunSO = gunManager.GetGunSO(index);
+                activeGunIndex = index;
+                UpdateGunStatus();
+            }
         }
 
         private void Shoot()
         {
             if (!canShoot) return;
+
+            if (ammo <= 0)
+            {
+                canShoot = false;
+                Invoke(reloadFuncName, reloadTime);
+                return;
+            }
 
             GameObject shot = Instantiate(bulletObject, firePoint.position, Quaternion.identity);
             shot.transform.rotation = transform.rotation;
@@ -89,15 +98,30 @@ namespace Clear
             shot.GetComponent<Bullet>().Init(gunDamage);
             Destroy(shot, deathTimer);
 
+            ammo--;
+            uiManager.SetAmmoText(ammo);
+
             canShoot = false;
             Invoke(enableShootFuncName, 1 / fireRate);
 
             if (AudioManager.GetInstance()) AudioManager.GetInstance().Play(GameConstants.SHOOT_SOUND_NAME);
         }
+
         private void UpdateGunStatus()
         {
             fireRate = activeGunSO.fireRate;
             gunDamage = activeGunSO.gunDamage;
+            reloadTime = activeGunSO.reloadTime;
+
+            ammo = gunManager.GetCurrentGunAmmo(activeGunIndex);
+            uiManager.SetAmmoText(ammo);
+        }
+
+        private void Reload()
+        {
+            canShoot = true;
+            ammo = activeGunSO.maxAmmo;
+            uiManager.SetAmmoText(ammo);
         }
 
         private void EnableShoot() => canShoot = true;

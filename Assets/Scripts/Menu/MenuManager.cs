@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Clear.Managers
 {
@@ -15,8 +14,9 @@ namespace Clear.Managers
 
         public void PlayButton()
         {
+            Debug.Log("Play");
             AudioManager.GetInstance().Stop(GameConstants.MENU_SOUND_NAME);
-            SceneManager.LoadScene(1);
+            SceneLoader.GetInstance().LoadScene(GameConstants.GAME_SCENE_NAME);
         }
     }
 }

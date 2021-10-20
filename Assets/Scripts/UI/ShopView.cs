@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Clear.Managers;
+using TMPro;
 
 namespace Clear.UI
 {
@@ -14,21 +14,19 @@ namespace Clear.UI
         [SerializeField]
         private GameObject stockTab;
 
-        [Header("Buttons.")]
+        [Header("Gold Ammount Text.")]
         [SerializeField]
-        private Button nextLevelButton;
-
-
-
-        private void Awake()
-        {
-            nextLevelButton.onClick.RemoveAllListeners();
-            nextLevelButton.onClick.AddListener(StartNextLevel);
-        }
+        private TMP_Text goldAmountText;
 
         private void OnEnable()
         {
             SwitchTabs(0);
+            UpdateGoldAmountText(PlayerEconomyManager.GetInstance().CurrencyData.goldAmount);
+        }
+
+        private void Start()
+        {
+            PlayerEconomyManager.GetInstance().onGoldCurrencyChanged += UpdateGoldAmountText;
         }
 
         public void SwitchTabs(int index)
@@ -37,10 +35,9 @@ namespace Clear.UI
             stockTab.SetActive(index == 1);
         }
 
-        public void StartNextLevel()
+        private void UpdateGoldAmountText(int ammount)
         {
-            UIManager.GetInstance().CloseShop();
-            GameManager.GetInstance().StartNextLevel();
+            goldAmountText.SetText("Gold: " + ammount.ToString());
         }
     }
 }

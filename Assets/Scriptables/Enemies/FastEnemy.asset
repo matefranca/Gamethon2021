@@ -15,3 +15,5 @@ MonoBehaviour:
   enemyType: 0
   moveSpeed: 6
   lifes: 2
+  damage: 0
+  enemyPrefab: {fileID: 137357971904144296, guid: f2dfd28ae92d7df4d8b6f89f7559340d, type: 3}

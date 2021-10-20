@@ -14,6 +14,8 @@ namespace Clear.Managers
         private TMP_Text startGameText;
         [SerializeField]
         private TMP_Text goldAmountText;
+        [SerializeField]
+        private TMP_Text ammoText;
 
         [Header("Dialogue Text.")]
         [SerializeField]
@@ -28,6 +30,10 @@ namespace Clear.Managers
         [Header("Dialogue Object.")]
         [SerializeField]
         private Animator dialogueAnimator;
+
+        [Header("Guns Images.")]
+        [SerializeField]
+        private GameObject[] gunsObjects;
 
         [Header("Buttons.")]
         [SerializeField]
@@ -56,7 +62,7 @@ namespace Clear.Managers
 
         private void UpdateGoldText(int ammount) => goldAmountText.SetText("Gold: " + ammount.ToString());
 
-        public void SetEnemiesLeftText(int amount) => enemiesLeftText.SetText("Enemies Left: " + amount.ToString());
+        public void SetEnemiesLeftText(int amount) => enemiesLeftText.SetText(amount.ToString());
 
         public void DisableStartText() => startGameText.gameObject.SetActive(false);
 
@@ -76,6 +82,13 @@ namespace Clear.Managers
 
         public void SetDialogueText(string sentence) => StartCoroutine(TypeText(sentence));
 
+        public void SetAmmoText(int ammo)
+        {
+            ammoText.SetText(ammo.ToString());
+            Color ammoColor = ammo < 5 ? Color.red : Color.yellow;
+            ammoText.color = ammoColor;
+        }
+
         private IEnumerator TypeText(string sentence)
         {
             yield return new WaitForSeconds(0.5f);
@@ -89,6 +102,11 @@ namespace Clear.Managers
             }
 
             EnableSpaceBarSkip();
+        }
+
+        public void SetGunObjects(int index, bool active)
+        {
+            gunsObjects[index].SetActive(active);
         }
     }
 }

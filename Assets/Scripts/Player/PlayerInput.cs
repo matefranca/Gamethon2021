@@ -11,7 +11,13 @@ namespace Clear
         [SerializeField]
         private KeyCode firstGunKey = KeyCode.Alpha1;
         [SerializeField]
-        private KeyCode secondGunKey = KeyCode.Alpha0;
+        private KeyCode secondGunKey = KeyCode.Alpha2;
+        [SerializeField]
+        private KeyCode thirdGunKey = KeyCode.Alpha3;
+        [SerializeField]
+        private KeyCode forthGunKey = KeyCode.Alpha4;
+        [SerializeField]
+        private KeyCode fifthGunKey = KeyCode.Alpha5;
 
         public Vector2 MovementInput { get; private set; }
 
@@ -19,8 +25,10 @@ namespace Clear
 
         public delegate void OnKeycodeInput();
         public OnKeycodeInput onShootInput;
-        public OnKeycodeInput onFirstGunInput;
-        public OnKeycodeInput onSecondGunInput;
+
+        public delegate void OnGunKeyCodeInput(int index);
+        public OnGunKeyCodeInput onGunInput;
+
 
         private GameManager gameManager;
 
@@ -40,8 +48,11 @@ namespace Clear
             MousePosition = Input.mousePosition;
 
             if (Input.GetMouseButton(0)) onShootInput?.Invoke();
-            if (Input.GetKeyDown(firstGunKey)) onFirstGunInput?.Invoke();
-            if (Input.GetKeyDown(secondGunKey)) onSecondGunInput?.Invoke();
+            if (Input.GetKeyDown(firstGunKey)) onGunInput?.Invoke(0);
+            if (Input.GetKeyDown(secondGunKey)) onGunInput?.Invoke(1);
+            if (Input.GetKeyDown(thirdGunKey)) onGunInput?.Invoke(2);
+            if (Input.GetKeyDown(forthGunKey)) onGunInput?.Invoke(3);
+            if (Input.GetKeyDown(fifthGunKey)) onGunInput?.Invoke(4);
         }
     }
 }

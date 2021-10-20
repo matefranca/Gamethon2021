@@ -7,7 +7,8 @@ namespace Clear.Managers
     public enum EnemyType
     {
         Fast,
-        Slow
+        Slow,
+        Money
     }
 
     public class SpawnerManager : SingletonInstance<SpawnerManager>
@@ -18,15 +19,22 @@ namespace Clear.Managers
 
         [Header("Enemy Prefab.")]
         [SerializeField]
-        private GameObject enemyPrefab;
+        private GameObject[] enemiesPrefabs;
+        [SerializeField]
+        private GameObject bossPrefab;
 
         [Header("Types of enemys.")]
         [SerializeField]
         private EnemySO[] enemiesScriptables;
 
+        [Header("Spawn Portal.")]
+        [SerializeField]
+        private GameObject portalSpawner;
+
         private List<Transform> spawnPointsList;
 
         private Dictionary<EnemyType, EnemySO> enemiesDictionary;
+        private Dictionary<EnemyType, GameObject> enemiesGameObjectsDictionary;
 
         private int numberOfEnemies;
         private float timeBtwSpawn;
@@ -34,7 +42,9 @@ namespace Clear.Managers
         private bool canSpawn;
         private bool levelStarted;
 
-        public List<GameObject> enemiesList;
+        private List<GameObject> enemiesList;
+        private int enemiesSpawned;
+        private int enemiesKilled;
 
         private UIManager uiManager;
         private GameManager gameManager;
@@ -75,10 +85,12 @@ namespace Clear.Managers
         private void FillEnemiesDictionary()
         {
             enemiesDictionary = new Dictionary<EnemyType, EnemySO>();
+            enemiesGameObjectsDictionary = new Dictionary<EnemyType, GameObject>();
 
             foreach (EnemySO so in enemiesScriptables)
             {
                 enemiesDictionary[so.enemyType] = so;
+                enemiesGameObjectsDictionary[so.enemyType] = so.enemyPrefab;
             }
         }
 
@@ -103,19 +115,21 @@ namespace Clear.Managers
             numberOfEnemies = levelSO.numberOfEnemies;
             timeBtwSpawn = levelSO.timeBtwnSpawns;
             currentType = levelSO.enemyType;
+            enemiesSpawned = 0;
+            enemiesKilled = 0;
         }
 
         private void Spawn()
         {
             if (gameManager.PlayEnabled && canSpawn)
             {
-                numberOfEnemies--;
+                enemiesSpawned++;
 
                 SpawnEnemy(currentType);
                 canSpawn = false;
                 Invoke(enableSpawnFuncName, timeBtwSpawn);
 
-                if (numberOfEnemies <= 0)
+                if (enemiesSpawned == numberOfEnemies)
                     gameManager.EndWave();
             }
         }
@@ -130,25 +144,33 @@ namespace Clear.Managers
             }
 
             EnemySO enemySO = enemiesDictionary[type];
-            GameObject enemy = Instantiate(enemyPrefab, spawnPointsList[rand].position, Quaternion.identity);
+
+            GameObject portalGO = Instantiate(portalSpawner, spawnPointsList[rand].position, Quaternion.identity);
+            PortalSpawner portalSpawnerScript = portalGO.GetComponent<PortalSpawner>();
+
+            portalSpawnerScript.Init(enemiesGameObjectsDictionary[type], enemySO); 
+        }
+
+        public void AddEnemy(GameObject enemy)
+        {
             enemiesList.Add(enemy);
-            enemy.GetComponent<Enemy>().Init(enemySO);
+           
         }
 
         public void RemoveEnemy(GameObject enemy)
         {
             if (enemiesList.Contains(enemy))
             {
+                enemiesKilled++;
                 enemiesList.Remove(enemy);
-                int enemies = Mathf.Max(enemiesList.Count, numberOfEnemies);
-                uiManager.SetEnemiesLeftText(enemies);
+                uiManager.SetEnemiesLeftText(numberOfEnemies - enemiesKilled);
                 playerEconomyManager.AddGoldCurrency(10);
             }
         }
 
         private void CheckForEndLevel()
         {
-            if (levelStarted && enemiesList.Count == 0 && numberOfEnemies == 0)
+            if (levelStarted && enemiesKilled == numberOfEnemies)
             {
                 gameManager.WaveCleared();
                 levelStarted = false;

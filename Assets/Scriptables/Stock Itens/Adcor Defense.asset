@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Adcor Defense
   m_EditorClassIdentifier: 
   companyName: Adcor Defense
-  initialStockValue: 20
+  initialStockValue: 1
   percentageRisk: 4

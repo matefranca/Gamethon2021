@@ -61,7 +61,7 @@ namespace Clear.Managers
 
         public void SellStock(int index, int ammount)
         {
-            if (itemQuantity[index] > 0)
+            if (itemQuantity[index] >= ammount)
             {
                 AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
 
@@ -70,9 +70,21 @@ namespace Clear.Managers
                 stockShop.UpdateQuantityText(index, itemQuantity[index]);
                 Debug.Log("Sell: " + ammount);
             }
-            else
             {
-                AudioManager.GetInstance().Play(GameConstants.ACESS_DENIED_SOUND_NAME);
+                if (itemQuantity[index] > 0)
+                {
+                    AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
+
+                    int quantity = itemQuantity[index];
+                    itemQuantity[index] = 0;
+                    playerEconomyManager.AddGoldCurrency(itemPrices[index] * quantity);
+                    stockShop.UpdateQuantityText(index, itemQuantity[index]);
+                    Debug.Log("Sell: " + quantity);
+                }
+                else
+                {
+                    AudioManager.GetInstance().Play(GameConstants.ACESS_DENIED_SOUND_NAME);
+                }
             }
         }
 

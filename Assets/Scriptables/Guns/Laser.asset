@@ -15,6 +15,9 @@ MonoBehaviour:
   gunName: Laser
   fireRate: 5
   gunDamage: 1000
-  price: 20000
-  gunImage: {fileID: 21300000, guid: 4dbc13297311e0c4daa86d0c6acc96a3, type: 3}
-  projectile: 2
+  price: 10000
+  gunImage: {fileID: 3434301064492516185, guid: a18d06723682c144dacda7fc8a1de62e, type: 3}
+  projectile: 0
+  maxAmmo: 1
+  reloadTime: 2
+  stockItemSO: {fileID: 11400000, guid: 2566a8e5cda941443a4a6f5628897305, type: 2}

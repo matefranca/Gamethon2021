@@ -11,6 +11,11 @@ namespace Clear
         [SerializeField]
         private float moveSpeed;
 
+        [Header("Floor Layermask")]
+        [SerializeField]
+        private LayerMask floorMask;
+
+        private PlayerShooting playerShooting;
         private PlayerInput playerInput;
         private Rigidbody rb;
 
@@ -20,6 +25,7 @@ namespace Clear
 
         void Start()
         {
+            playerShooting = GetComponent<PlayerShooting>();
             playerInput = GetComponent<PlayerInput>();
             gameManager = GameManager.GetInstance();
             rb = GetComponent<Rigidbody>();
@@ -54,12 +60,16 @@ namespace Clear
         {
             Ray ray = gameManager.CurrentCamera.ScreenPointToRay(playerInput.MousePosition);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance: 300f))
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance: 300f, floorMask))
             {
                 Vector3 target = hit.point;
                 target.y = transform.position.y;
                 transform.LookAt(target);
+
+                playerShooting.GunsParent.LookAt(target);
+                playerShooting.FirePoint.LookAt(target);
             }
+
         }
     }
 }

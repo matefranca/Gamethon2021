@@ -29,6 +29,7 @@ namespace Clear.UI
 
         private int stockIndex;
         private int stocksToBuy;
+        private int percentageRisk;
 
         private void Start()
         {
@@ -45,7 +46,8 @@ namespace Clear.UI
         public void Init(int index, StockItemSO item)
         {
             nameText.SetText(item.companyName);
-            valueText.SetText(item.initialStockValue.ToString());
+            percentageRisk = item.percentageRisk;
+            UpdateValueText(item.initialStockValue.ToString());
             quantityText.SetText("0");
             stockIndex = index;
         }
@@ -74,6 +76,7 @@ namespace Clear.UI
             {
                 StockManager.GetInstance().SetNotEnoughText(buyButton.transform);
             }
+
         }
 
         private void SellStock()
@@ -82,6 +85,26 @@ namespace Clear.UI
             stocksToBuy = 1;
             stockAmount.text = "1";
             StockManager.GetInstance().SellStock(stockIndex, stocks);
+        }
+
+        public void ChangeStock()
+        {
+            Debug.Log("Changing Stock: " + stockIndex);
+
+            int random = Random.Range(0, 10);
+            bool increased = random > percentageRisk;
+            int randomIncrease = Random.Range(1, 20);
+
+            int stockValue = StockManager.GetInstance().GetStockValue(stockIndex);
+
+            if (increased) stockValue += randomIncrease;
+            else stockValue -= randomIncrease;
+            stockValue = Mathf.Clamp(stockValue, 1, 100);
+
+            StockManager.GetInstance().SetStockValue(stockIndex, stockValue);
+
+            UpdateValueText(stockValue.ToString());
+            valueText.color = increased ? Color.green : Color.red;
         }
     }
 }

@@ -7,4 +7,7 @@ public class StockItemSO : ScriptableObject
 {
     public string companyName;
     public int initialStockValue;
+
+    [Range(1,10)]
+    public int percentageRisk;
 }

@@ -16,16 +16,16 @@ namespace Clear.Managers
         [Header("Spawn Points.")]
         [SerializeField]
         private Transform spawnPointsParent;
-
-        [Header("Enemy Prefab.")]
         [SerializeField]
-        private GameObject[] enemiesPrefabs;
+        private Transform bossSpawnPoint;
+
+        [Header("Boss Prefab.")]
         [SerializeField]
         private GameObject bossPrefab;
 
         [Header("Types of enemys.")]
         [SerializeField]
-        private EnemySO[] enemiesScriptables;
+        private EnemySO[] enemiesSO;
 
         [Header("Spawn Portal.")]
         [SerializeField]
@@ -42,12 +42,21 @@ namespace Clear.Managers
         private bool canSpawn;
         private bool levelStarted;
 
+        private bool isBossLevel;
+        private int bossLifeMultiplier;
+
+        private bool isRandomSpawn;
+        private int enemies1;
+        private int enemies2;
+        private int enemies3;
+
         private List<GameObject> enemiesList;
         private int enemiesSpawned;
         private int enemiesKilled;
 
         private UIManager uiManager;
         private GameManager gameManager;
+        private PlayerManager playerManager;
         private PlayerEconomyManager playerEconomyManager;
 
         private string enableSpawnFuncName = "EnableSpawn";
@@ -59,6 +68,7 @@ namespace Clear.Managers
 
             uiManager = UIManager.GetInstance();
             gameManager = GameManager.GetInstance();
+            playerManager = PlayerManager.GetInstance();
             playerEconomyManager = PlayerEconomyManager.GetInstance();
 
             enemiesList = new List<GameObject>();
@@ -87,7 +97,7 @@ namespace Clear.Managers
             enemiesDictionary = new Dictionary<EnemyType, EnemySO>();
             enemiesGameObjectsDictionary = new Dictionary<EnemyType, GameObject>();
 
-            foreach (EnemySO so in enemiesScriptables)
+            foreach (EnemySO so in enemiesSO)
             {
                 enemiesDictionary[so.enemyType] = so;
                 enemiesGameObjectsDictionary[so.enemyType] = so.enemyPrefab;
@@ -96,7 +106,45 @@ namespace Clear.Managers
 
         public void StartLevel()
         {
-            StartCoroutine(StartLevelSequence());            
+            isBossLevel = false;
+            isRandomSpawn = false;
+
+            StartCoroutine(StartLevelSequence());
+        }
+
+        public void StartLevelWithBoss(int multiplier)
+        {
+            multiplier = Mathf.Max(multiplier, 1);
+
+            numberOfEnemies = 1;
+            enemiesSpawned = 0;
+            enemiesKilled = 0;
+
+            isBossLevel = true;
+            isRandomSpawn = false;
+
+            bossLifeMultiplier = multiplier;
+
+            StartCoroutine(StartLevelSequence());
+        }
+
+        public void StartRandomLevel(int level, float initialSpawnTime)
+        {
+            numberOfEnemies = Mathf.Min(level, 50);
+            timeBtwSpawn = initialSpawnTime - (level / 100);
+            timeBtwSpawn = Mathf.Clamp(timeBtwSpawn, 0.5f, 10);
+
+            enemies1 = Random.Range(0, numberOfEnemies);
+            enemies2 = Random.Range(0, numberOfEnemies - enemies1);
+            enemies3 = numberOfEnemies - enemies1 - enemies2;
+
+            enemiesSpawned = 0;
+            enemiesKilled = 0;
+
+            isRandomSpawn = true;
+            isBossLevel = false;
+
+            StartCoroutine(StartLevelSequence());
         }
 
         private IEnumerator StartLevelSequence()
@@ -121,16 +169,33 @@ namespace Clear.Managers
 
         private void Spawn()
         {
-            if (gameManager.PlayEnabled && canSpawn)
+            if (gameManager.SpawnEnabled && canSpawn)
             {
-                enemiesSpawned++;
-
-                SpawnEnemy(currentType);
                 canSpawn = false;
-                Invoke(enableSpawnFuncName, timeBtwSpawn);
 
-                if (enemiesSpawned == numberOfEnemies)
+                if (isBossLevel)
+                {
+                    SpawnBoss();
                     gameManager.EndWave();
+                }
+                else
+                {
+                    enemiesSpawned++;
+
+                    if (isRandomSpawn)
+                    {
+                        SpawnEnemiesRandomly();
+                    }
+                    else
+                    {
+                        SpawnEnemy(currentType);
+                    }
+
+                    Invoke(enableSpawnFuncName, timeBtwSpawn);
+
+                    if (enemiesSpawned == numberOfEnemies)
+                        gameManager.EndWave();
+                }
             }
         }
 
@@ -151,20 +216,62 @@ namespace Clear.Managers
             portalSpawnerScript.Init(enemiesGameObjectsDictionary[type], enemySO); 
         }
 
+        private void SpawnBoss()
+        {
+            GameObject bossGO = Instantiate(bossPrefab, bossSpawnPoint.position, bossSpawnPoint.rotation);
+            enemiesList.Add(bossGO);
+            Boss boss = bossGO.GetComponent<Boss>();
+            boss.Init(bossLifeMultiplier, GameManager.GetInstance().PlayerTransform);
+        }
+
+        private void SpawnEnemiesRandomly()
+        {
+            bool hasEnemiesToSpawn = true;
+            int random;
+            EnemyType type;
+
+            do
+            {
+                random = Random.Range(0, enemiesSO.Length);
+                if (random == 0 && enemies1 > 0)
+                {
+                    enemies1--;
+                    type = EnemyType.Slow;
+                    hasEnemiesToSpawn = false; 
+                }
+                else if (random == 1 && enemies2 > 0)
+                {
+                    enemies2--;
+                    type = EnemyType.Fast;
+                    hasEnemiesToSpawn = false;
+                }
+                else
+                {
+                    enemies3--;
+                    type = EnemyType.Money;
+                    hasEnemiesToSpawn = false;
+                }
+
+            } while (hasEnemiesToSpawn);
+
+            SpawnEnemy(type);
+        }
+
         public void AddEnemy(GameObject enemy)
         {
             enemiesList.Add(enemy);
-           
         }
 
-        public void RemoveEnemy(GameObject enemy)
+        public void RemoveEnemy(GameObject enemy, int gold, int points)
         {
             if (enemiesList.Contains(enemy))
             {
                 enemiesKilled++;
                 enemiesList.Remove(enemy);
                 uiManager.SetEnemiesLeftText(numberOfEnemies - enemiesKilled);
-                playerEconomyManager.AddGoldCurrency(10);
+                playerManager.AddPoints(points);
+                playerManager.AddEnemiesKilled();
+                playerEconomyManager.AddGoldCurrency(gold);
             }
         }
 
@@ -173,7 +280,9 @@ namespace Clear.Managers
             if (levelStarted && enemiesKilled == numberOfEnemies)
             {
                 gameManager.WaveCleared();
+                isBossLevel = false;
                 levelStarted = false;
+                isRandomSpawn = false;
             }
         }
 

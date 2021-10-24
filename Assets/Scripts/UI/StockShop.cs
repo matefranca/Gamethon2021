@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,11 +21,6 @@ namespace Clear.UI
 
         public List<StockObject> stockList;
 
-        private void Start()
-        {
-            stockList = new List<StockObject>();
-        }
-
         public void CreateStockObject(int position, StockItemSO item)
         {
             StockObject stock = Instantiate(stockObjectTemplate, stockParent.transform);
@@ -36,7 +30,6 @@ namespace Clear.UI
             RectTransform rect = stock.GetComponent<RectTransform>();
             float yPos = -padding * position;
             rect.anchoredPosition = new Vector2(rect.anchoredPosition.x, yPos);
-
         }
 
         public void UpdateQuantityText(int index, int ammount)
@@ -56,6 +49,14 @@ namespace Clear.UI
             Transform parent = rect.GetComponent<Transform>();
             GameObject notEnoughObject = Instantiate(notEnoughMoneyObject, parent);
             Destroy(notEnoughObject, 0.5f);
+        }
+
+        public void ChangeStocks()
+        {
+            foreach (StockObject item in stockList)
+            {
+                item.ChangeStock();
+            }
         }
     }
 }

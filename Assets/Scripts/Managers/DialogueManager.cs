@@ -1,20 +1,25 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Clear.Managers
 {
     public class DialogueManager : SingletonInstance<DialogueManager>
     {
-        private bool dialogueEnabled;
+        [Header("Dialogue Skip Button")]
+        [SerializeField]
+        private Button skipButton;
 
+        private bool dialogueEnabled;
+        
         private Queue<string> sentences;
 
         private void Start()
         {
             UIManager.GetInstance().DisableSpaceBarSkip();
+
+            skipButton.onClick.RemoveAllListeners();
+            skipButton.onClick.AddListener(SkipSentence);
         }
 
         private void Update()
@@ -58,6 +63,7 @@ namespace Clear.Managers
         {
             if (UIManager.GetInstance().IsSpaceBarSkipActive())
             {
+                AudioManager.GetInstance().Play(GameConstants.BUTTON_SELECT_SOUND_NAME);
                 UIManager.GetInstance().DisableSpaceBarSkip();
                 NextDialogue();
             }

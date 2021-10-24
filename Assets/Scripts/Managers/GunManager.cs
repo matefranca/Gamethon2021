@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Clear.UI;
@@ -15,6 +13,13 @@ namespace Clear.Managers
         [Header("Gun Shop.")]
         [SerializeField]
         private GunShop gunShop;
+
+        [Header("Projectiles.")]
+        [SerializeField]
+        private GameObject[] projectiles;
+        [SerializeField]
+        private GameObject explosion;
+        
 
         private Dictionary<int, bool> gunsOwned;
         private Dictionary<int, int> ammoDictionary;
@@ -54,7 +59,7 @@ namespace Clear.Managers
         {
             for (int i = 1; i < gunsSO.Length; i++)
             {
-                gunShop.CreateGunItem(i, gunsSO[i]);
+                gunShop.CreateGunItem(i - 1, gunsSO[i]);
             }
         }
 
@@ -76,9 +81,17 @@ namespace Clear.Managers
             }
         }
 
-        public bool BuyGun(int index)
+        public bool BuyGun(int index, out bool hasStock)
         {
-            if (index > 0 || index < gunsOwned.Values.Count)
+            if (!StockManager.GetInstance().HasCompanyStock(index - 1))
+            {
+                hasStock = false;
+                return false;
+            }
+
+            hasStock = true;
+
+            if (index > 0 && index < gunsOwned.Values.Count)
             {
                 int price = gunsSO[index].price;
                 if (PlayerEconomyManager.GetInstance().CurrencyData.goldAmount >= price)
@@ -102,6 +115,12 @@ namespace Clear.Managers
             gunShop.SetNotEnoughText(rect);
         }
 
+        public void SetDontHaveStock(Transform rect)
+        {
+            gunShop.SetDontHaveStock(rect);
+        }
+        
+
         public int GetCurrentGunAmmo(int index)
         {
             return ammoDictionary[index];
@@ -110,6 +129,26 @@ namespace Clear.Managers
         public void SetGunAmmo(int index, int ammount)
         {
             ammoDictionary[index] = ammount;
+        }
+
+        public GameObject GetBulletPrefab(GunSO gunSO)
+        {
+            switch (gunSO.projectile)
+            {
+                case Projectile.bullet:
+                    return projectiles[0];
+
+                case Projectile.missile:
+                    return projectiles[1];
+
+                default:
+                    return null;
+            }
+        }
+
+        public GameObject GetExplosionObject()
+        {
+            return explosion;
         }
     }
 }

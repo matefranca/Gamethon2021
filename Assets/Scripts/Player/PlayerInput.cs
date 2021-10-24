@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Clear.Managers;
+using System;
+using UnityEngine.EventSystems;
 
 namespace Clear
 {
@@ -46,6 +48,8 @@ namespace Clear
             MovementInput = new Vector2(horizontalInput, verticalInput);
 
             MousePosition = Input.mousePosition;
+
+            if (EventSystem.current.IsPointerOverGameObject()) return;
 
             if (Input.GetMouseButton(0)) onShootInput?.Invoke();
             if (Input.GetKeyDown(firstGunKey)) onGunInput?.Invoke(0);

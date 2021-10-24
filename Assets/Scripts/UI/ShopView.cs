@@ -13,6 +13,8 @@ namespace Clear.UI
         private GameObject gunShopTab;
         [SerializeField]
         private GameObject stockTab;
+        [SerializeField]
+        private GameObject skinTab;
 
         [Header("Gold Ammount Text.")]
         [SerializeField]
@@ -31,13 +33,19 @@ namespace Clear.UI
 
         public void SwitchTabs(int index)
         {
-            gunShopTab.SetActive(index == 0);
-            stockTab.SetActive(index == 1);
+            stockTab.SetActive(index == 0);
+            gunShopTab.SetActive(index == 1);
+            skinTab.SetActive(index == 2);
         }
 
         private void UpdateGoldAmountText(int ammount)
         {
             goldAmountText.SetText("Gold: " + ammount.ToString());
+        }
+
+        public void PlayButtonSound()
+        {
+            AudioManager.GetInstance().Play(GameConstants.BUTTON_SELECT_SOUND_NAME);
         }
     }
 }

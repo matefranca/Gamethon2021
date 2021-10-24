@@ -20,38 +20,59 @@ namespace Clear.UI
         private TMP_Text priceText;
         [SerializeField]
         private Image gunImage;
+        [SerializeField]
+        private TMP_Text companyNameText;
 
         [Header("Buttons.")]
         [SerializeField]
         private Button buyButton;
 
-        private int gunItemIndex;
+        private int gunItemIndex; // 1 less than in the gun manager.
+        private int price;
+
+        private StockManager stockManager;
+        private PlayerEconomyManager playerEconomyManager;
 
         private void Start()
         {
             buyButton.onClick.RemoveAllListeners();
             buyButton.onClick.AddListener(BuyGun);
+
+            stockManager = StockManager.GetInstance();
         }
 
         public void Init(int index, GunSO gunSO)
         {
+            price = gunSO.price;
             gunItemIndex = index;
-            gunNameText.SetText(gunSO.gunName);
-            fireRateText.SetText("Fire Rate: " + gunSO.fireRate.ToString() + "/s");
-            damageText.SetText("Dano: " + gunSO.gunDamage.ToString());
-            priceText.SetText("Preço: R$ " + gunSO.price.ToString());
             gunImage.sprite = gunSO.gunImage;
+            gunNameText.SetText(gunSO.gunName);
+            priceText.SetText("Preço: R$ " + price.ToString());
+            companyNameText.SetText(gunSO.stockItemSO.companyName);
+            damageText.SetText("Dano: " + gunSO.gunDamage.ToString());
+            fireRateText.SetText("Fire Rate: " + gunSO.fireRate.ToString() + "/s");
         }
 
         private void BuyGun()
         {
-            if (GunManager.GetInstance().BuyGun(gunItemIndex))
+            bool hasStock;
+            if (GunManager.GetInstance().BuyGun(gunItemIndex + 1, out hasStock))
             {
+                AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
                 gameObject.SetActive(false);
             }
             else
             {
-                GunManager.GetInstance().SetNotEnoughText(buyButton.transform);
+                AudioManager.GetInstance().Play(GameConstants.ACESS_DENIED_SOUND_NAME);
+
+                if (!hasStock)
+                {
+                    GunManager.GetInstance().SetDontHaveStock(buyButton.transform);
+                }
+                else
+                {
+                    GunManager.GetInstance().SetNotEnoughText(buyButton.transform);
+                }
             }
         }
     }

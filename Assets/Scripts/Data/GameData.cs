@@ -4,11 +4,13 @@ namespace Clear.Data
     {
         public int level;
         public int health;
+        public int points;
 
-        public GameData()
+        public GameData(int health)
         {
-            level = 0;
-            health = 5;
+            level = 1;
+            this.health = health;
+            points = 0;
         }
     }
 }

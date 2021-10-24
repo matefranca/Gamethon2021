@@ -16,5 +16,7 @@ MonoBehaviour:
   fireRate: 2
   gunDamage: 1
   price: 0
-  gunImage: {fileID: 21300000, guid: ae8cb9e86fd27c14baf26828a107e10d, type: 3}
+  gunImage: {fileID: 4319395737909131107, guid: 00fc9b316c132074a8532913d71a9826, type: 3}
   projectile: 0
+  maxAmmo: 25
+  reloadTime: 1

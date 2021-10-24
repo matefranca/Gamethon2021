@@ -1,4 +1,3 @@
-using UnityEngine.Audio;
 using System;
 using UnityEngine;
 
@@ -6,7 +5,13 @@ namespace Clear.Managers
 {
 	public class AudioManager : Singleton<AudioManager>
 	{
-		public Sound[] sounds;
+		[Header("Sounds.")]
+		[SerializeField]
+		private Sound[] sounds;
+
+		public bool Canplay { get; private set; } = true;
+
+		public bool musicEnabled = true;
 
         protected override void OnInitialize()
         {
@@ -20,6 +25,8 @@ namespace Clear.Managers
 
 		public void Play(string sound)
 		{
+			if (!Canplay) return;
+
 			Sound s = Array.Find(sounds, item => item.name == sound);
 			if (s == null)
 			{
@@ -54,5 +61,10 @@ namespace Clear.Managers
 
 			return s.source.isPlaying;
 		}
+
+		public void SetCanPlay(bool active)
+        {
+			Canplay = active;
+        }
 	}
 }

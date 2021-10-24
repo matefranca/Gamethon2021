@@ -25,6 +25,7 @@ namespace Clear.Managers
         public void RemoveGoldCurrency(int ammount)
         {
             CurrencyData.goldAmount -= ammount;
+            CurrencyData.goldAmount = CurrencyData.goldAmount < 0 ? 0 : CurrencyData.goldAmount;
             onGoldCurrencyChanged?.Invoke(CurrencyData.goldAmount);
         }
 

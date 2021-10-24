@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.AI;
 using Clear.Managers;
+using Clear.Utils;
 
 namespace Clear
 {
-    public class Enemy : MonoBehaviour
+    public class Enemy : MonoBehaviour, TakeDamage
     {
         [Header("Health Bar")]
         [SerializeField]
@@ -27,9 +26,13 @@ namespace Clear
 
         private Transform target;
 
-        private float moveSpeed;
+        private int goldPoints;
+        private int killPoints;
         private float maxLifes;
         private float lifes;
+        private int damage;
+
+        private EnemyType enemyType;
 
         private void Start()
         {
@@ -45,23 +48,22 @@ namespace Clear
 
         public void Init(EnemySO enemySO)
         {
+            damage = enemySO.damage;
             maxLifes = enemySO.lifes;
+            enemyType = enemySO.enemyType;
             agent.speed = enemySO.moveSpeed;
+            killPoints = enemySO.killPoints;
+            goldPoints = enemySO.goldPoints;
         }
 
         private void Move()
         {
             if (target == null) return;
 
-            transform.LookAt(target);
-            if (Vector3.Distance(transform.position, target.position) < 0.2f)
-            {
-                agent.SetDestination(transform.position);
-            }
-            else
-            {
-                agent.SetDestination(target.position);
-            }
+            Vector3 targetPosition = new Vector3(target.position.x, transform.position.y, target.position.z);
+
+            transform.LookAt(targetPosition);
+            agent.SetDestination(targetPosition);
         }
 
         public void TakeDamage(int amount)
@@ -71,8 +73,10 @@ namespace Clear
 
             if (lifes <= 0)
             {
-                Destroy(Instantiate(goldTextEffect, transform.position, Quaternion.identity), 2f);
-                SpawnerManager.GetInstance().RemoveEnemy(gameObject);
+                GameObject goldEffect = Instantiate(goldTextEffect, transform.position, Quaternion.identity);
+                goldEffect.GetComponent<GoldBonusText>().Init(goldPoints.ToString());
+                SpawnerManager.GetInstance().RemoveEnemy(gameObject, goldPoints, killPoints);
+                Destroy(goldEffect, 2f);
 
                 ParticleSystem particle = Instantiate(particleSystem, transform.position, Quaternion.identity);
                 particle.Play();
@@ -84,7 +88,18 @@ namespace Clear
         {
             if (collision.transform.CompareTag(GameConstants.PLAYER_TAG))
             {
-                GameManager.GetInstance().RestartGame();
+                if (enemyType == EnemyType.Money)
+                {
+                    GameManager.GetInstance().TakeMoney();
+                    CameraController.GetInstance().Shake();
+                    PlayerManager.GetInstance().ResetEnemiesKilled();
+                }
+                else
+                {
+                    PlayerManager.GetInstance().TakeDamage(damage);
+                }
+                SpawnerManager.GetInstance().RemoveEnemy(gameObject, 0, 0);
+                Destroy(gameObject);
             }
         }
     }

@@ -15,8 +15,9 @@ MonoBehaviour:
   gunName: Ak - 47
   fireRate: 5
   gunDamage: 1
-  price: 1
-  gunImage: {fileID: 21300000, guid: cdf490ede6e01834c88b0cba12daa473, type: 3}
+  price: 100
+  gunImage: {fileID: -6461748175520337109, guid: bcd85ca0f89a16b4facf98fc366d4778, type: 3}
   projectile: 0
-  maxAmmo: 0
-  reloadTime: 0
+  maxAmmo: 50
+  reloadTime: 1.5
+  stockItemSO: {fileID: 11400000, guid: 480d2f6c74acf49459a495e3bdb970b5, type: 2}

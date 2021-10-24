@@ -13,6 +13,7 @@ public class GunSO : ScriptableObject
     public Projectile projectile;
     public int maxAmmo;
     public float reloadTime;
+    public StockItemSO stockItemSO;
 }
 
 public enum Projectile

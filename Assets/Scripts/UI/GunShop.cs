@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Clear.Managers;
 
 namespace Clear.UI
 {
@@ -14,9 +15,11 @@ namespace Clear.UI
         [SerializeField]
         private Transform gunItemsParent;
 
-        [Header("Not Enough Money Text.")]
+        [Header("PopUps Text")]
         [SerializeField]
         private GameObject notEnoughMoneyObject;
+        [SerializeField]
+        private GameObject dontHaveStockObject;
 
         public List<GunItemObject> gunsItensList;
 
@@ -38,6 +41,13 @@ namespace Clear.UI
             Transform parent = rect.GetComponent<Transform>();
             GameObject notEnoughObject = Instantiate(notEnoughMoneyObject, parent);
             Destroy(notEnoughObject, 0.5f);
+        }
+
+        public void SetDontHaveStock(Transform rect)
+        {
+            Transform parent = rect.GetComponent<Transform>();
+            GameObject dontHaveStock = Instantiate(dontHaveStockObject, parent);
+            Destroy(dontHaveStock, 0.8f);
         }
     }
 }

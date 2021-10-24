@@ -14,8 +14,8 @@ namespace Clear.Managers
         [SerializeField]
         private StockItemSO[] stockItems;
 
-        public List<int> itemQuantity;
-        public List<int> itemPrices;
+        private List<int> itemQuantity;
+        private List<int> itemPrices;
 
         private PlayerEconomyManager playerEconomyManager;
 
@@ -28,8 +28,8 @@ namespace Clear.Managers
 
         private void InitializeStockShop()
         {
-            itemQuantity.Clear();
-            itemPrices.Clear();
+            itemQuantity = new List<int>();
+            itemPrices = new List<int>();
 
             for (int i = 0; i < stockItems.Length; i++)
             {
@@ -43,6 +43,8 @@ namespace Clear.Managers
         {
             if (playerEconomyManager.CanAfford(itemPrices[index]))
             {
+                AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
+
                 itemQuantity[index] += ammount;
                 playerEconomyManager.RemoveGoldCurrency(itemPrices[index] * ammount);
                 stockShop.UpdateQuantityText(index, itemQuantity[index]);
@@ -51,6 +53,8 @@ namespace Clear.Managers
             }
             else
             {
+                AudioManager.GetInstance().Play(GameConstants.ACESS_DENIED_SOUND_NAME);
+
                 return false;
             }
         }
@@ -59,34 +63,42 @@ namespace Clear.Managers
         {
             if (itemQuantity[index] > 0)
             {
-                itemQuantity[index]-= ammount;
+                AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
+
+                itemQuantity[index] -= ammount;
                 playerEconomyManager.AddGoldCurrency(itemPrices[index] * ammount);
-                stockShop.UpdateQuantityText(index, itemQuantity[index]);   
+                stockShop.UpdateQuantityText(index, itemQuantity[index]);
                 Debug.Log("Sell: " + ammount);
             }
+            else
+            {
+                AudioManager.GetInstance().Play(GameConstants.ACESS_DENIED_SOUND_NAME);
+            }
+        }
+
+        public int GetStockValue(int index)
+        {
+            return itemPrices[index];
+        }
+
+        public void SetStockValue(int index, int value)
+        {
+            itemPrices[index] = value;
         }
 
         public void ChangeStocks()
         {
-            // TODO - To be calculated.
-            /* 
-            for (int i = 0; i < itemPrices.Count; i++)
-            {
-                int rand = Random.Range(0, 2);
-                int multiplier = rand == 0 ? 2 : -2;
-
-                int price = itemPrices[i] * multiplier;
-
-                price = Mathf.Clamp(price, 1, 50);
-                itemPrices[i] = price;
-
-                stockShop.UpdateValueText(i, itemPrices[i]);
-            }*/            
+            stockShop.ChangeStocks();           
         }
 
         public void SetNotEnoughText(Transform rect)
         {
             stockShop.SetNotEnoughText(rect);
+        }
+
+        public bool HasCompanyStock(int index)
+        {
+            return itemQuantity[index] > 0;
         }
     }
 }

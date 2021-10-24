@@ -15,8 +15,9 @@ MonoBehaviour:
   gunName: Minigun
   fireRate: 10
   gunDamage: 1
-  price: 1
-  gunImage: {fileID: 21300000, guid: c4a1107e47c2fd24fb1687ff1ba72859, type: 3}
+  price: 500
+  gunImage: {fileID: -1231475628462036089, guid: f4a223b266b0c71498143567a223be95, type: 3}
   projectile: 0
-  maxAmmo: 0
-  reloadTime: 0
+  maxAmmo: 100
+  reloadTime: 5
+  stockItemSO: {fileID: 11400000, guid: c2fdcf8916b7811449ba9a236893c923, type: 2}

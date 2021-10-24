@@ -12,8 +12,11 @@ public class SceneLoader : Singleton<SceneLoader>
     [SerializeField]
     private Image loadingBar;
 
+    AsyncOperation handle;
+
     public void LoadScene(string sceneName)
     {
+        Time.timeScale = 1; 
         StartCoroutine(LoadSceneAsync(sceneName));
     }
 
@@ -23,13 +26,16 @@ public class SceneLoader : Singleton<SceneLoader>
         loadingBar.fillAmount = 0;
         
         yield return new WaitForSeconds(0.5f);
-        AsyncOperation handle = SceneManager.LoadSceneAsync(sceneName);
+        Debug.Log("loading scene " + sceneName);
+        handle = SceneManager.LoadSceneAsync(sceneName);
+
         while (handle.progress < 1)
         {
             loadingBar.fillAmount = handle.progress;
             yield return new WaitForEndOfFrame();
         }
 
+        Debug.Log("loaded scene " + sceneName);
         loadingScreen.SetActive(false);
     }
 }

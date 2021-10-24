@@ -6,6 +6,8 @@ using Clear.Managers;
 [CreateAssetMenu(menuName = "Scriptables/ Level", fileName = "New Level")]
 public class LevelSO : ScriptableObject
 {
+    public int initalLevel;
+
     public bool hasDialogue;
     public DialogueSO dialogueSO;
 

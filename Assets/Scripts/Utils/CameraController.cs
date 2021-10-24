@@ -22,11 +22,6 @@ namespace Clear.Utils
         private void Update()
         {
             transform.position = target.position + offset;
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Shake();
-            }
         }
 
         public void Shake()

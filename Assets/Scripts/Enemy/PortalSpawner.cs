@@ -1,6 +1,4 @@
 using Clear.Managers;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Clear
@@ -26,6 +24,7 @@ namespace Clear
             seq.append(() => enemy.GetComponent<Enemy>().Init(enemySO));
             seq.append(() => SpawnerManager.GetInstance().AddEnemy(enemy));
             seq.append(LeanTween.scale(gameObject, Vector3.zero, openTime).setEase(LeanTweenType.animationCurve));
+            seq.append(() => Destroy(gameObject));
         }
     }
 }

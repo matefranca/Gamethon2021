@@ -1,0 +1,119 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8242198593740283297
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8242198593740283303}
+  - component: {fileID: 8242198593740283302}
+  m_Layer: 0
+  m_Name: Audio Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8242198593740283303
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242198593740283297}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8242198593740283302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242198593740283297}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2337e2b8fe1a02247ac809ea47b54316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: Menu
+    clip: {fileID: 8300000, guid: 5fc6890e8be0e5148919540f774429be, type: 3}
+    volume: 0.109
+    loop: 1
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Game
+    clip: {fileID: 8300000, guid: bc25d3aee3fc2634e81cdc16a7938ec3, type: 3}
+    volume: 0.115
+    loop: 1
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Shoot
+    clip: {fileID: 8300000, guid: 6f0357f29e355004b9f8a7752a093e68, type: 3}
+    volume: 0.079
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: PlayerHit
+    clip: {fileID: 8300000, guid: 256849fbf02fcda4a83f5bf4c732c6d6, type: 3}
+    volume: 0.065
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Footstep
+    clip: {fileID: 8300000, guid: 84384ebe970ca894ea4876f0c20aeb92, type: 3}
+    volume: 0.21
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Boss
+    clip: {fileID: 8300000, guid: 8a6c87a71fe601545b8f4675c26fe99d, type: 3}
+    volume: 0.079
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Explosion
+    clip: {fileID: 8300000, guid: 6b71e39496fbaba4694a806ae0f3ddd8, type: 3}
+    volume: 0.079
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: ButtonSelect
+    clip: {fileID: 8300000, guid: fd60a91caa073a441a58c2c88834946a, type: 3}
+    volume: 0.079
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: AcessDenied
+    clip: {fileID: 8300000, guid: c479be537b33d99428674257b95dda00, type: 3}
+    volume: 0.062
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: BuyClickSound
+    clip: {fileID: 8300000, guid: f25c0e6ef7bdcbc45b6cdebba1a73c00, type: 3}
+    volume: 0.062
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Raygun
+    clip: {fileID: 8300000, guid: 8915ead7f1cd3fa45a3f83784cbba6f5, type: 3}
+    volume: 0.062
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  - name: Missile
+    clip: {fileID: 8300000, guid: 2706aab1f22f1c74eadb3e582543d286, type: 3}
+    volume: 0.062
+    loop: 0
+    isSFX: 0
+    source: {fileID: 0}
+  musicEnabled: 1

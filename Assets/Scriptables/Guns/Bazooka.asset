@@ -14,7 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gunName: Bazooka
   fireRate: 1
-  gunDamage: 1
-  price: 5000
-  gunImage: {fileID: 21300000, guid: ba5e42d5b3ba4cd43a8c6bb0bfd381c8, type: 3}
+  gunDamage: 2
+  price: 1000
+  gunImage: {fileID: 5290858561200421350, guid: 52b38898860fd054eb90e654ef5d06e9, type: 3}
   projectile: 1
+  maxAmmo: 3
+  reloadTime: 3
+  stockItemSO: {fileID: 11400000, guid: c050288264660c4458c2bb6a02380413, type: 2}

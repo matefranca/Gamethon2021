@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Clear.Managers;
 
@@ -18,20 +15,26 @@ namespace Clear
         [SerializeField]
         private GameObject[] gunsObjects;
 
-        [Header("Prefabs.")]
-        [SerializeField]
-        private GameObject bulletObject;
-
         [Header("Fire Point")]
         [SerializeField]
         private Transform firePoint;
+        [SerializeField]
+        private Transform gunsParent;
+        [SerializeField]
+        private ParticleSystem muzzleParticle;
+        [SerializeField]
+        private GameObject smokeObject;
+
+        public Transform FirePoint { get { return firePoint; } }
+        public Transform GunsParent { get { return gunsParent; } }
 
         private PlayerInput playerInput;
 
         private GunManager gunManager;
         private UIManager uiManager;
 
-        public bool canShoot = true;
+        private bool canShoot = true;
+        private bool isReloading;
 
         private float fireRate;
         private int gunDamage;
@@ -55,15 +58,19 @@ namespace Clear
             playerInput.onShootInput += Shoot;
 
             canShoot = true;
-            activeGunIndex = 1;
+            activeGunIndex = 0;
             activeGunSO = activeGunSO = gunManager.GetGunSO(0);
             UpdateGunStatus();
         }
 
-        
-
         private void ChangeToWeapon(int index)
         {
+            if (isReloading)
+            {
+                uiManager.CreateReloadingText();
+                return;
+            }
+
             if (gunManager.HasGunEnabled(index) && activeGunIndex != index && index >= 0 && index < gunsObjects.Length)
             {
                 foreach (GameObject gun in gunsObjects)
@@ -85,26 +92,46 @@ namespace Clear
         {
             if (!canShoot) return;
 
-            if (ammo <= 0)
-            {
-                canShoot = false;
-                Invoke(reloadFuncName, reloadTime);
-                return;
-            }
+            muzzleParticle.Play();
 
-            GameObject shot = Instantiate(bulletObject, firePoint.position, Quaternion.identity);
-            shot.transform.rotation = transform.rotation;
-            shot.GetComponent<Rigidbody>().AddForce(transform.forward * fireForce);
-            shot.GetComponent<Bullet>().Init(gunDamage);
-            Destroy(shot, deathTimer);
+            if (activeGunSO.projectile == Projectile.laser)
+            {
+                SpawnLaser();
+            }
+            else
+            {
+                GameObject bulletObject = GunManager.GetInstance().GetBulletPrefab(activeGunSO);
+                GameObject shot = Instantiate(bulletObject, firePoint.position, Quaternion.identity);
+                shot.transform.rotation = transform.rotation;
+                shot.GetComponent<Rigidbody>().AddForce(firePoint.forward * fireForce);
+
+                if (activeGunSO.projectile == Projectile.bullet)
+                {
+                    shot.GetComponent<Bullet>().Init(gunDamage);
+                    if (AudioManager.GetInstance()) AudioManager.GetInstance().Play(GameConstants.SHOOT_SOUND_NAME);
+                }
+                else if (activeGunSO.projectile == Projectile.missile)
+                {
+                    smokeObject.SetActive(true);
+                    shot.GetComponent<Missile>().Init(GunManager.GetInstance().GetExplosionObject());
+                    if (AudioManager.GetInstance()) AudioManager.GetInstance().Play(GameConstants.MISILE_SOUND_NAME);
+                }
+                Destroy(shot, deathTimer);
+            }
 
             ammo--;
             uiManager.SetAmmoText(ammo);
 
+            if (ammo <= 0)
+            {
+                canShoot = false;
+                isReloading = true;
+                Invoke(reloadFuncName, reloadTime);
+                return;
+            }
+
             canShoot = false;
             Invoke(enableShootFuncName, 1 / fireRate);
-
-            if (AudioManager.GetInstance()) AudioManager.GetInstance().Play(GameConstants.SHOOT_SOUND_NAME);
         }
 
         private void UpdateGunStatus()
@@ -117,11 +144,19 @@ namespace Clear
             uiManager.SetAmmoText(ammo);
         }
 
+        private void SpawnLaser()
+        {
+            AudioManager.GetInstance().Play(GameConstants.RAYGUN_SOUND_NAME);
+        }
+
+        // Called by invoke.
         private void Reload()
         {
             canShoot = true;
+            isReloading = false;
             ammo = activeGunSO.maxAmmo;
             uiManager.SetAmmoText(ammo);
+            gunManager.SetGunAmmo(activeGunIndex, ammo);
         }
 
         private void EnableShoot() => canShoot = true;

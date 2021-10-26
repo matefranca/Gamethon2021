@@ -75,11 +75,10 @@ namespace Clear.Managers
                 {
                     AudioManager.GetInstance().Play(GameConstants.BUY_CLICK_SOUND_NAME);
 
-                    int quantity = itemQuantity[index];
-                    itemQuantity[index] = 0;
-                    playerEconomyManager.AddGoldCurrency(itemPrices[index] * quantity);
+                    playerEconomyManager.AddGoldCurrency(itemPrices[index] * itemQuantity[index]);
                     stockShop.UpdateQuantityText(index, itemQuantity[index]);
-                    Debug.Log("Sell: " + quantity);
+                    Debug.Log("Sell: " + itemQuantity[index]);
+                    itemQuantity[index] = 0;
                 }
                 else
                 {

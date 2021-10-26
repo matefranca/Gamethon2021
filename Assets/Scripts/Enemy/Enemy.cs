@@ -26,6 +26,7 @@ namespace Clear
 
         private Transform target;
 
+
         private int goldPoints;
         private int killPoints;
         private float maxLifes;

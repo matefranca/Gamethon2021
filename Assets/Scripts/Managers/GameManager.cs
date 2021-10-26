@@ -134,7 +134,6 @@ namespace Clear.Managers
 
                 if (levelSOindex == levels.Length - 1)
                 {
-                    //currentLevelSO = levels[levelSOindex];
                     nextLevelSO = -1;
                 }
                 else
@@ -145,8 +144,7 @@ namespace Clear.Managers
             }
             else if (level != 1)
             {
-                //LevelSO levelSO = new LevelSO(false, null, currentLevelSO.numberOfEnemies + 2, currentLevelSO.timeBtwnSpawns - 0.2f, currentLevelSO.enemyType);
-                LevelSO levelSO = new LevelSO(false, null, currentLevelSO.numberOfEnemies, currentLevelSO.timeBtwnSpawns - 0.2f, currentLevelSO.enemyType);
+                LevelSO levelSO = new LevelSO(false, null, currentLevelSO.numberOfEnemies + 2, currentLevelSO.timeBtwnSpawns - 0.2f, currentLevelSO.enemyType);
                 currentLevelSO = levelSO;
             }
 

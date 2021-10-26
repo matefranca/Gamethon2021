@@ -1,5 +1,6 @@
 using UnityEngine;
 using Clear.Managers;
+using System.Collections;
 
 namespace Clear
 {
@@ -147,6 +148,12 @@ namespace Clear
         private void SpawnLaser()
         {
             AudioManager.GetInstance().Play(GameConstants.RAYGUN_SOUND_NAME);
+            StartCoroutine(LaserAttack());
+        }
+
+        private IEnumerator LaserAttack()
+        {
+            yield return null;
         }
 
         // Called by invoke.
